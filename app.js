@@ -1,14 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-
 const app = express();
 const db = require("./db");
+
+const listRoutes = require("./routes/listRoutes");
 app.use(express.json());
 app.use(cors());
+app.use("/list", listRoutes);
 
-app.get("/", (req, res,next) => {
-    return res.json({"msg": "success"})
-})
 
 
 app.use(function (err, req, res, next) {

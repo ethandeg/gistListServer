@@ -4,3 +4,5 @@ CREATE DATABASE "gistlist";
 
 \i gistlist-schema.sql
 \i gistlist-seed.sql
+
+\q
