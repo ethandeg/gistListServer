@@ -1,9 +1,18 @@
 const express = require("express");
 const router = new express.Router();
-const List = require("../models/listModel");
-
+const List = require("../models/list");
+const db = require("../db");
 
 //GET ROUTES
+router.get("/test", async(req, res, next) => {
+    try {
+        const result = await db.query(`SELECT ID from lists`);
+        const test = result.rows.map(r => r.id);
+        return res.json(test);
+    } catch(e){
+        return next(e);
+    }
+})
 router.get("/", async(req,res,next) => {
     try {
         const {limit} = req.query;
