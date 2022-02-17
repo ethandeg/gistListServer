@@ -7,7 +7,7 @@ class List {
         return !!results.rows.length;
     }
     static async getAllLists(limit = 100){
-        const results = await db.query(`SELECT * FROM lists ORDER BY id DESC LIMIT $1`, [limit]);
+        const results = await db.query(`SELECT * FROM lists ORDER BY id ASC LIMIT $1`, [limit]);
         return results.rows;
     }
 

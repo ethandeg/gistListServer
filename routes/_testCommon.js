@@ -1,37 +1,64 @@
 "use strict";
 const path = require("path");
 const db = require("../db.js");
-const Lesson = require("../models/list");
+const List = require("../models/list");
 const {readSqlFile, schemaSql} = require("../sql/callableDbSeed");
-let listIds = [];
-let listItemIds = [];
 
 async function commonBeforeAll(){
-    await db.query(`DROP TABLE IF EXISTS list_items`);
-    await db.query(`DROP TABLE IF EXISTS lists`);
-    await db.query(`DROP TABLE IF EXISTS users`);
-    await db.query(schemaSql);
-    const queries = readSqlFile(path.resolve(__dirname,"../sql/gistlist-seed.sql"));
-    for(let query of queries){
-        await db.query(query);
+    try {
+        await db.query(`DROP TABLE IF EXISTS list_items`);
+        await db.query(`DROP TABLE IF EXISTS lists`);
+        await db.query(`DROP TABLE IF EXISTS users`);
+        await db.query(schemaSql);
+        const queries = readSqlFile(path.resolve(__dirname,"../sql/gistlist-seed.sql"));
+        for(let query of queries){
+            await db.query(query);
+        }
+    } catch(e){
+        console.error(e)
     }
-    const lists = await db.query(`SELECT id FROM lists`);
-    const listItems = await db.query(`SELECT id FROM list_items`);
-    listIds = [...listIds, ...lists.rows.map(l => l.id)];
-    listItemIds = [...listItemIds, ...listItems.rows.map(li => li.id)];
+
+
 
 }
-
 async function commonBeforeEach() {
-    await db.query("BEGIN");
+    try {
+        await db.query("BEGIN");
+    } catch(e){
+        console.error(e)
+    }
+
   }
   
   async function commonAfterEach() {
-    await db.query("ROLLBACK");
+      try{
+            await db.query("ROLLBACK");
+      } catch(e){
+          console.error(e)
+      }
+    
   }
   
   async function commonAfterAll() {
-    await db.end();
+      try{
+        await db.end();
+      } catch(e){
+          console.error(e)
+      }
+    
+  }
+
+  async function getIds(){
+      try {
+        const lists = await db.query(`SELECT id FROM lists`);
+        const listIds = lists.rows.map(item => item.id);
+        const listItems = await db.query(`SELECT id FROM list_items`);
+        const listItemIds = listItems.rows.map(item => item.id);
+        return [listIds, listItemIds];
+      } catch(e){
+          console.error(e)
+      }
+
   }
 
 module.exports = {
@@ -39,6 +66,5 @@ module.exports = {
     commonBeforeEach,
     commonAfterAll,
     commonAfterEach,
-    listIds,
-    listItemIds
+    getIds
 }
