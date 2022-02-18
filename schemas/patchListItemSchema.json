@@ -1,0 +1,62 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "item": "Jeans",
+            "itemLink": "https://shop.goop-img.com/cdn-cgi/image/height=960,width=960,dpr=1,format=auto,onerror=redirect,metadata=copyright/spree/images/attachments/000/072/726/large/open-uri20211020-13-l4fnmj?version=1634761894.webp",
+            "id": 4,
+            "listId": 2
+        }
+    ],
+    "required": [
+        "id"
+    ],
+    "properties": {
+        "item": {
+            "$id": "#/properties/item",
+            "type": "string",
+            "title": "The item schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Jeans"
+            ]
+        },
+        "itemLink": {
+            "$id": "#/properties/itemLink",
+            "type": "string",
+            "title": "The itemLink schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "https://shop.goop-img.com/cdn-cgi/image/height=960,width=960,dpr=1,format=auto,onerror=redirect,metadata=copyright/spree/images/attachments/000/072/726/large/open-uri20211020-13-l4fnmj?version=1634761894.webp"
+            ]
+        },
+        "id": {
+            "$id": "#/properties/id",
+            "type": "integer",
+            "title": "The id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                4
+            ]
+        },
+        "listId": {
+            "$id": "#/properties/listId",
+            "type": "integer",
+            "title": "The listId schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                2
+            ]
+        }
+    },
+    "additionalProperties": false
+}

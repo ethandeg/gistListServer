@@ -54,5 +54,42 @@ function camelToSnake(str) {
     return arr.join("")
 }
 
+function getProperJsValues(arrOfObj){
+        const jsProper = [];
+        arrOfObj.map(obj => {
+            let newObj = {};
+            for([k,v] of Object.entries(obj)){
+                let key = snakeToCamel(k);
+                newObj[key] = v
+            }
+        jsProper.push(newObj)
+        })
+        return jsProper
+}
+// const test = [
+//     {
+//       id: 1,
+//       name: 'my shopping list',
+//       description: 'list for shopping',
+//       created: "2022-02-17T23:18:59.312Z",
+//       user_id: 1
+//     },
+//     {
+//       id: 2,
+//       name: 'chritmas list',
+//       description: 'what i want this year for christmas',
+//       created: "2022-02-17T23:18:59.312Z",
+//       user_id: 1
+//     },
+//     {
+//       id: 3,
+//       name: 'dolly stuff',
+//       description: 'stuff for dolly',
+//       created: "2022-02-17T23:18:59.312Z",
+//       user_id: 2
+//     }
+//   ]
+// let x = getProperJsValues(test)
 
-module.exports = { sqlForPartialUpdate }
+// console.log(x)
+module.exports = { sqlForPartialUpdate, snakeToCamel, camelToSnake, getProperJsValues }

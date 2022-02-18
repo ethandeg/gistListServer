@@ -18,7 +18,7 @@ CREATE TABLE lists(
 
 CREATE TABLE list_items (
     id SERIAL PRIMARY KEY,
-    item VARCHAR(255),
+    item VARCHAR(255) NOT NULL,
     item_link TEXT,
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     list_id INTEGER REFERENCES lists ON DELETE CASCADE

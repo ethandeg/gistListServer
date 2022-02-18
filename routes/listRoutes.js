@@ -1,18 +1,16 @@
 const express = require("express");
 const router = new express.Router();
 const List = require("../models/list");
-const db = require("../db");
+const schemaCheck = require("../helpers/schemaCheck")
+const createListSchema = require("../schemas/createListSchema.json")
+const createListItemSchema = require("../schemas/createListItemSchema.json")
+const patchListSchema = require("../schemas/patchListSchema.json")
+const patchListItemSchema = require("../schemas/patchListItemSchema.json")
+const deleteListSchema = require("../schemas/deleteListSchema.json")
+const deleteListItemSchema = require("../schemas/deleteListItemSchema.json")
 
 //GET ROUTES
-router.get("/test", async(req, res, next) => {
-    try {
-        const result = await db.query(`SELECT ID from lists`);
-        const test = result.rows.map(r => r.id);
-        return res.json(test);
-    } catch(e){
-        return next(e);
-    }
-})
+
 router.get("/", async(req,res,next) => {
     try {
         const {limit} = req.query;
@@ -28,7 +26,7 @@ router.get("/", async(req,res,next) => {
 router.get("/:listId", async(req,res,next) =>{
     try {
         const {listId} = req.params;
-        const results = await List.getListItems(listId);
+        const results = await List.getListInfo(listId);
         return res.json(results);
     } catch(e){
         return next(e);
@@ -39,10 +37,11 @@ router.get("/:listId", async(req,res,next) =>{
 
 router.post("/", async (req, res, next) => {
     try {
+        schemaCheck(req.body,createListSchema);
         const listObj = req.body;
         const result = await List.create(listObj);
         result.success = true;
-        return res.json(result);
+        return res.status(201).json(result);
     } catch(e){
         return next(e);
     }
@@ -50,10 +49,11 @@ router.post("/", async (req, res, next) => {
 
 router.post("/item", async(req,res,next) => {
     try {
+        schemaCheck(req.body, createListItemSchema);
         const itemObj = req.body;
         const result = await List.createListItem(itemObj);
         result.success = true;
-        return res.json(result);
+        return res.status(201).json(result);
     } catch(e){
         return next(e);
     }
@@ -63,6 +63,7 @@ router.post("/item", async(req,res,next) => {
 
 router.patch("/", async(req,res,next) => {
     try {
+        schemaCheck(req.body, patchListSchema);
         const {id, ...listObj} = req.body;
         const result = await List.updateList(id, listObj);
         result.success = true;
@@ -74,6 +75,7 @@ router.patch("/", async(req,res,next) => {
 
 router.patch("/item", async(req,res,next) => {
     try {
+        schemaCheck(req.body, patchListItemSchema);
         const {id, ...itemObj} = req.body;
         const result = await List.updateListItem(id, itemObj);
         result.success = true;
@@ -87,6 +89,7 @@ router.patch("/item", async(req,res,next) => {
 //DELETE ROUTES 
 router.delete("/", async (req,res,next) => {
     try {
+        schemaCheck(req.body, deleteListSchema)
         const {id} = req.body;
         const result = await List.deleteList(id);
         result.success = true;
@@ -99,6 +102,7 @@ router.delete("/", async (req,res,next) => {
 
 router.delete("/item", async (req, res ,next) => {
     try{
+        schemaCheck(req.body, deleteListItemSchema);
         const {id} = req.body;
         result = await List.deleteListItem(id);
         result.success = true;

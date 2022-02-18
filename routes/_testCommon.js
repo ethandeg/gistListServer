@@ -3,7 +3,7 @@ const path = require("path");
 const db = require("../db.js");
 const List = require("../models/list");
 const {readSqlFile, schemaSql} = require("../sql/callableDbSeed");
-
+const {getProperJsValues} = require("../helpers/modelHelpers");
 async function commonBeforeAll(){
     try {
         await db.query(`DROP TABLE IF EXISTS list_items`);
@@ -48,17 +48,27 @@ async function commonBeforeEach() {
     
   }
 
-  async function getIds(){
+  async function getItems(){
       try {
-        const lists = await db.query(`SELECT id FROM lists`);
-        const listIds = lists.rows.map(item => item.id);
-        const listItems = await db.query(`SELECT id FROM list_items`);
-        const listItemIds = listItems.rows.map(item => item.id);
-        return [listIds, listItemIds];
+        const lists = await db.query(`SELECT * FROM lists`);
+        // const listIds = lists.rows.map(item => item.id);
+        const listItems = await db.query(`SELECT * FROM list_items`);
+        // const listItemIds = listItems.rows.map(item => item.id);
+        const listsProper = getProperJsValues(lists.rows);
+        const listItemsProper = getProperJsValues(listItems.rows);
+        // console.log(listsProper);
+        return {
+            lists: listsProper,
+            listItems: listItemsProper,
+        }
       } catch(e){
           console.error(e)
       }
 
+  }
+
+  function jsonifyDate(date){
+      return date.toJSON()
   }
 
 module.exports = {
@@ -66,5 +76,6 @@ module.exports = {
     commonBeforeEach,
     commonAfterAll,
     commonAfterEach,
-    getIds
+    getItems,
+    jsonifyDate
 }
