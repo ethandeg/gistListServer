@@ -57,10 +57,12 @@ describe("GET /list/id", () => {
     test("Correct listId should return valid response", async () => {
         const resp = await request(app)
         .get(`/list/1`)
-        const lis = listItems.filter(l => l.listId = 1);
-        const l = lists.filter(x => x.id = 1)[0];
-        l.items = lis;
-        expect(Object.keys(l)).toEqual(Object.keys(resp.body));
+        const listsX = lists.filter(l => l.id === 1);
+        const listItemsX = listItems.filter(x => x.listId === 1);
+        listsX[0].items = listItemsX;
+        expect(new Set(Object.keys(listsX[0]))).toEqual(new Set(Object.keys(resp.body)));
+        expect(resp.statusCode).toEqual(200);
+        expect(listsX[0]).toEqual(resp.body);
     })
 
     test("Not existent listId should return bad request error", async() => {
@@ -183,7 +185,6 @@ describe("PATCH /list/item", () => {
         .get("/list/1")
         const {items} = newList.body;
         const itemX = items.find(i => i.id == 2)
-        console.log(itemX)
         expect([itemX.item,  itemX.id, itemX.listId]).toEqual(Object.values(sendVals));
     })
 

@@ -1,19 +1,6 @@
 const { BadRequestError } = require("../expressError")
 
-// function sqlForPartialUpdate(dataToUpdate, jsToSql) {
-//     const keys = Object.keys(dataToUpdate);
-//     if (keys.length === 0) throw new BadRequestError("No data");
 
-//     // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
-//     const cols = keys.map((colName, idx) =>
-//         `"${jsToSql[colName] || colName}"=$${idx + 1}`,
-//     );
-
-//     return {
-//         setCols: cols.join(", "),
-//         values: Object.values(dataToUpdate),
-//     };
-// }
 
 function sqlForPartialUpdate(dataToUpdate) {
     //data to update would look something like this
@@ -66,30 +53,29 @@ function getProperJsValues(arrOfObj){
         })
         return jsProper
 }
-// const test = [
-//     {
-//       id: 1,
-//       name: 'my shopping list',
-//       description: 'list for shopping',
-//       created: "2022-02-17T23:18:59.312Z",
-//       user_id: 1
-//     },
-//     {
-//       id: 2,
-//       name: 'chritmas list',
-//       description: 'what i want this year for christmas',
-//       created: "2022-02-17T23:18:59.312Z",
-//       user_id: 1
-//     },
-//     {
-//       id: 3,
-//       name: 'dolly stuff',
-//       description: 'stuff for dolly',
-//       created: "2022-02-17T23:18:59.312Z",
-//       user_id: 2
-//     }
-//   ]
-// let x = getProperJsValues(test)
 
-// console.log(x)
-module.exports = { sqlForPartialUpdate, snakeToCamel, camelToSnake, getProperJsValues }
+function prepareInsert(insertObj){
+    //key return needs to look like this
+    //(col1, col2, col3)
+    //values needs to be
+    //($1, $2, $3)
+    let keys = Object.keys(insertObj);
+    let values = [];
+    keys = keys.map(key => camelToSnake(key));
+    keys = keys.join(", ");
+    keys = `(${keys})`;
+    const valuesLength = Object.values(insertObj).length;
+    for(let i = 0; i < valuesLength; i++){
+        values.push(`$${i + 1}`);
+    }
+    values = values.join(", ");
+    values = `(${values})`;
+    return {
+        keys,
+        values,
+    }
+}
+
+
+
+module.exports = { sqlForPartialUpdate, snakeToCamel, camelToSnake, getProperJsValues, prepareInsert }

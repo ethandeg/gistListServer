@@ -5,17 +5,14 @@ const List = require("../models/list");
 const {readSqlFile, schemaSql} = require("../sql/callableDbSeed");
 const {getProperJsValues} = require("../helpers/modelHelpers");
 async function commonBeforeAll(){
-    try {
-        await db.query(`DROP TABLE IF EXISTS list_items`);
-        await db.query(`DROP TABLE IF EXISTS lists`);
-        await db.query(`DROP TABLE IF EXISTS users`);
-        await db.query(schemaSql);
-        const queries = readSqlFile(path.resolve(__dirname,"../sql/gistlist-seed.sql"));
-        for(let query of queries){
-            await db.query(query);
-        }
-    } catch(e){
-        console.error(e)
+
+    await db.query(`DROP TABLE IF EXISTS list_items`);
+    await db.query(`DROP TABLE IF EXISTS lists`);
+    await db.query(`DROP TABLE IF EXISTS users`);
+    await db.query(schemaSql);
+    const queries = readSqlFile(path.resolve(__dirname,"../sql/gistlist-seed.sql"));
+    for(let query of queries){
+        await db.query(query);
     }
 
 
@@ -56,10 +53,13 @@ async function commonBeforeEach() {
         // const listItemIds = listItems.rows.map(item => item.id);
         const listsProper = getProperJsValues(lists.rows);
         const listItemsProper = getProperJsValues(listItems.rows);
+        const users = await db.query(`SELECT * FROM users`);
+        const usersProper = getProperJsValues(users.rows);
         // console.log(listsProper);
         return {
             lists: listsProper,
             listItems: listItemsProper,
+            users: usersProper
         }
       } catch(e){
           console.error(e)
