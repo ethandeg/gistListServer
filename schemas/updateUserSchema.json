@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "id": 1,
+            "password": "new password",
+            "oldPassword": "ethan",
+            "email": "ethandeg1996@gmail.com",
+            "profilePic": "https://www.incimages.com/uploaded_files/image/1920x1080/getty_481292845_77896.jpg"
+        }
+    ],
+    "required": [
+        "id",
+        "oldPassword"
+    ],
+    "properties": {
+        "id": {
+            "$id": "#/properties/id",
+            "type": "integer",
+            "title": "The id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                1
+            ]
+        },
+        "password": {
+            "$id": "#/properties/password",
+            "type": "string",
+            "title": "The password schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "new password"
+            ]
+        },
+        "oldPassword": {
+            "$id": "#/properties/oldPassword",
+            "type": "string",
+            "title": "The oldPassword schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "ethan"
+            ]
+        },
+        "email": {
+            "$id": "#/properties/email",
+            "type": "string",
+            "title": "The email schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "ethandeg1996@gmail.com"
+            ]
+        },
+        "profilePic": {
+            "$id": "#/properties/profilePic",
+            "type": "string",
+            "title": "The profilePic schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "https://www.incimages.com/uploaded_files/image/1920x1080/getty_481292845_77896.jpg"
+            ]
+        }
+    },
+    "additionalProperties": false
+}
