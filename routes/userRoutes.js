@@ -59,7 +59,7 @@ router.post("/login", async (req, res, next) => {
 
 //PATCH ROUTES
 
-router.patch("/", async (req, res, next) => {
+router.patch("/", ensureCorrectUserOrAdmin, async (req, res, next) => {
     try {
         schemaCheck(req.body, updateUserSchema);
         const { id, ...userObj } = req.body;
@@ -73,7 +73,7 @@ router.patch("/", async (req, res, next) => {
 
 //DELETE ROUTES
 
-router.delete("/", async (req, res, next) => {
+router.delete("/", ensureCorrectUserOrAdmin, async (req, res, next) => {
     try {
         const { id } = req.body;
         const result = await User.deleteUser(id);
