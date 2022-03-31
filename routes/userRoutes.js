@@ -2,10 +2,13 @@ const express = require("express");
 const router = new express.Router();
 const User = require("../models/user");
 const schemaCheck = require("../helpers/schemaCheck");
+const { createToken } = require("../helpers/token");
+const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const loginUserSchema = require("../schemas/loginUser.json");
 const createUserSchema = require("../schemas/createUserSchema.json");
 const updateUserSchema = require("../schemas/updateUserSchema.json");
 //GET ROUTES
-router.get("/", async (req, res, next) => {
+router.get("/", ensureLoggedIn, async (req, res, next) => {
     try {
         const { limit } = req.query;
         const result = await User.getAllUsers(limit);
@@ -15,7 +18,7 @@ router.get("/", async (req, res, next) => {
     }
 })
 
-router.get("/:userId", async (req, res, next) => {
+router.get("/:userId", ensureCorrectUserOrAdmin, async (req, res, next) => {
     try {
         const { userId } = req.params;
         const results = await User.getUser(userId);
@@ -33,7 +36,22 @@ router.post("/", async (req, res, next) => {
         schemaCheck(req.body, createUserSchema);
         const results = await User.createUser(req.body);
         results.success = true;
+        const token = createToken(results);
+        results._token = token;
         return res.status(201).json(results);
+    } catch (e) {
+        return next(e)
+    }
+})
+
+router.post("/login", async (req, res, next) => {
+    try {
+        schemaCheck(req.body, loginUserSchema);
+        const { username, password } = req.body;
+        const user = await User.authenticate(username, password);
+        const token = createToken(user);
+        user._token = token;
+        return res.json(user);
     } catch (e) {
         return next(e)
     }

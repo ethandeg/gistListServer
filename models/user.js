@@ -1,7 +1,8 @@
 const db = require("../db");
 const { BadRequestError } = require("../expressError");
 const { sqlForPartialUpdate, getProperJsValues, prepareInsert } = require("../helpers/modelHelpers");
-
+const bcrypt = require("bcrypt");
+const { BCRYPT_WORK_FACTOR } = require("../config");
 class User {
     static async getAllUsers(limit = 100) {
         const results = await db.query(`SELECT * FROM users LIMIT $1`, [limit])
@@ -24,6 +25,10 @@ class User {
     }
 
     static async createUser(userObj) {
+        const duplicateCheck = await db.query(`SELECT id FROM users WHERE username = $1`, [userObj.username]);
+        if (duplicateCheck.rows.length) throw new BadRequestError(`Duplicate username: ${userObj.username}`);
+        const hashedPassword = await bcrypt.hash(userObj.password, BCRYPT_WORK_FACTOR);
+        userObj.password = hashedPassword;
         const { keys, values } = prepareInsert(userObj);
         const results = await db.query(`INSERT INTO users ${keys} VALUES ${values} RETURNING id`, Object.values(userObj));
         if (!results.rows.length) {
@@ -49,6 +54,21 @@ class User {
         if (!results.rows.length) throw new BadRequestError("No user with the id of " + id);
         return results.rows[0]
     }
+
+    static async authenticate(username, password) {
+        const result = await db.query(`SELECT username, password, id FROM users WHERE username = $1`, [username]);
+        const user = result.rows[0];
+        if (!user) {
+            throw new BadRequestError("No user by the username of " + username);
+        }
+        const isValid = await bcrypt.compare(password, user.password);
+        if (isValid) {
+            delete user.password;
+            return user;
+        }
+        throw new BadRequestError("Password is incorrect");
+    }
+
 }
 
 
